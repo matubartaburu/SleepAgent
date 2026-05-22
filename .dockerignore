@@ -1,0 +1,67 @@
+# ─────────────────────────────────────────────────────────────────────
+# .dockerignore — qué NO copiar a la imagen Docker.
+#
+# Crítico: nunca copiamos secrets, venv local, ni archivos de dev.
+# ─────────────────────────────────────────────────────────────────────
+
+# Secrets — bajo ninguna circunstancia
+.env
+.env.*
+!.env.example
+
+# Virtualenv local (la imagen tiene su propio venv en /opt/venv)
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Tests (no van a producción)
+tests/
+pytest.ini
+
+# Data privada / PII de salud
+data/
+*.xml
+*.zip
+
+# Git / dev tooling
+.git/
+.gitignore
+.github/
+
+# Docs y configs locales
+docs/
+NOTES.md
+ARCHITECTURE.md
+*.md
+!README.md
+Agents.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Multi-agent state (vive en disco local, no en producción)
+.agents/
+
+# Scripts de dev
+dev_force_report.py
+run.sh
+tunnel.sh
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs locales
+*.log

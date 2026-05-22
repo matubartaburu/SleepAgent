@@ -1,0 +1,58 @@
+# ────────────────────────────────────────────────────────────────────
+# fly.toml — SleepAgent (Oscar) on Fly.io
+#
+# Region: gru (São Paulo) — más cercano a Montevideo.
+# Auto-stop deshabilitado: el scheduler interno (APScheduler) necesita
+# que la app esté siempre viva para los cron jobs diarios.
+# ────────────────────────────────────────────────────────────────────
+
+app = "oscar-mateo"
+primary_region = "gru"
+kill_signal = "SIGINT"
+kill_timeout = "10s"
+
+[build]
+  # Usa el Dockerfile en el raíz, sin builder remoto.
+  dockerfile = "Dockerfile"
+
+[env]
+  # Toggle de production — activa log sanitization y oculta /docs.
+  OSCAR_ENV = "production"
+  # Zona horaria para APScheduler.
+  TZ = "America/Montevideo"
+  # Puerto interno.
+  PORT = "8765"
+  # Reporte diario 08:30 Mvd.
+  REPORT_HOUR = "8"
+  REPORT_MINUTE = "30"
+
+# ── HTTP service ───────────────────────────────────────────────────────
+[http_service]
+  internal_port = 8765
+  force_https = true
+  # NO auto_stop: APScheduler tiene que estar siempre vivo.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+# ── Compute: la VM más chica que alcanza para FastAPI + APScheduler ────
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"
+
+# ── Concurrency ────────────────────────────────────────────────────────
+[http_service.concurrency]
+  type = "requests"
+  hard_limit = 50
+  soft_limit = 20
+
+# ── Logs ───────────────────────────────────────────────────────────────
+# Los logs van al stack de Fly. Ya están sanitizados desde la app.

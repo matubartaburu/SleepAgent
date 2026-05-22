@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "description": "Lista de features pendientes para Oscar. El orchestrator lee de acá, los workers toman, validator revisa.",
+  "features": [
+    {
+      "id": "F-PREFLIGHT-001",
+      "title": "Preflight check antes del reporte diario",
+      "status": "done",
+      "priority": "high",
+      "spec": "Antes de las 08:30 corre 08:25. Verifica data + Twilio + Anthropic y alerta si algo falta.",
+      "files_likely_touched": ["report.py", "main.py", "agents/preflight.py"],
+      "acceptance_criteria": [
+        "preflight_check() devuelve dict con data_ok, twilio_ok, anthropic_ok, issues",
+        "Si data_ok=false manda alerta WhatsApp",
+        "Scheduler corre preflight a las 08:25",
+        "Tests unitarios mockeando los tres servicios"
+      ],
+      "completed_at": "2026-05-15"
+    },
+    {
+      "id": "F-VALIDATOR-001",
+      "title": "Validator LLM-as-judge integrado al envío",
+      "status": "done",
+      "priority": "high",
+      "spec": "Después de build_daily_report y antes de Twilio, validator Opus revisa contra validation.contract.md. Max 3 retries con feedback. Si falla, alerta a Mateo.",
+      "files_likely_touched": ["report.py", "agents/validator.py"],
+      "acceptance_criteria": [
+        "Reporte pasa validator → envío normal",
+        "Rechaza → regenera con feedback (max 3)",
+        "3 intentos fallan → alerta a Mateo con texto + issues",
+        "Validación registrada en .agents/handoffs.jsonl",
+        "Opt-in vía OSCAR_VALIDATOR_ENABLED=1"
+      ],
+      "completed_at": "2026-05-15"
+    },
+    {
+      "id": "F-WEEKLY-MONTHLY-001",
+      "title": "Reportes semanal (domingo 09:30) y mensual (día 1 10:30) + consistencia + reto",
+      "status": "done",
+      "priority": "high",
+      "spec": "Weekly: 7 noches con promedios, consistencia (SD bedtime/waketime), distribución, mejor/peor noche, cross-ref con sleep_notes. Monthly: 30 noches + comparación vs mes anterior. Reto cariñoso si promedio <7h10. Daily también rete si total_sleep_minutes <430.",
+      "files_likely_touched": ["report.py", "main.py"],
+      "acceptance_criteria": [
+        "build_weekly_report() y build_monthly_report() devuelven texto válido",
+        "Daily user_message inyecta FLAG INTERNO si <430min",
+        "Consistencia con SD pob de bedtime/waketime + etiqueta humana",
+        "Distribución por bucket (<6h, 6-7h, 7-8h, 8h+)",
+        "Monthly compara con 30 días previos si hay data",
+        "Schedulers Sunday 09:30 y day-1 10:30 activos",
+        "Endpoints /report/test-weekly y /report/test-monthly",
+        "Tests verdes (test_consistency_helpers, test_daily_reto, test_weekly_monthly)"
+      ],
+      "completed_at": "2026-05-15"
+    },
+    {
+      "id": "F-SLEEP-NOTES-001",
+      "title": "Detector de anomalías + follow-up question + inbound webhook + tagger",
+      "status": "done",
+      "priority": "high",
+      "spec": "Tras enviar el reporte diario, si hay anomalías Oscar manda 2do WhatsApp pidiendo contexto. Mateo responde, Twilio reenvía a /whatsapp/inbound (firma validada), tagger Haiku extrae causas controladas, persiste en sleep_notes. Weekly/monthly cruzan tags con noches malas.",
+      "files_likely_touched": [
+        "supabase_setup.sql",
+        "db.py",
+        "report.py",
+        "main.py",
+        "agents/tagger.py"
+      ],
+      "acceptance_criteria": [
+        "Tabla sleep_notes creada (UNIQUE night_date)",
+        "_detect_anomalies devuelve tags concretos (sueño_corto, deep_flaco, hrv_bajo, etc.)",
+        "_generate_followup_question usa Sonnet, max 200 chars",
+        "Endpoint /whatsapp/inbound valida firma Twilio, ignora remitentes desconocidos",
+        "tag_answer_haiku filtra tags contra lista controlada, cae en 'otro' si no matchea",
+        "Weekly/monthly context incluye tag_counts agrupado",
+        "Tests verdes (test_tagger, test_inbound_webhook)"
+      ],
+      "completed_at": "2026-05-15",
+      "manual_steps_required": [
+        "Aplicar bloque sleep_notes de supabase_setup.sql en Supabase SQL Editor",
+        "En Twilio Sandbox: configurar 'When a message comes in' a https://<ngrok>/whatsapp/inbound (POST)"
+      ]
+    },
+    {
+      "id": "F-REPORTS-TABLE-001",
+      "title": "Tabla sleep_reports para histórico",
+      "status": "pending",
+      "priority": "medium",
+      "spec": "Crear tabla sleep_reports en Supabase para drift detection.",
+      "files_likely_touched": ["supabase_setup.sql", "db.py", "report.py"],
+      "acceptance_criteria": [
+        "Migración SQL agregada",
+        "insert_sleep_report() en db.py",
+        "send_daily/weekly/monthly persisten tras enviar"
+      ]
+    }
+  ]
+}
