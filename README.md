@@ -1,5 +1,7 @@
 # Oscar — Agente personal de sueño y entrenamiento por WhatsApp
 
+> **English summary.** Oscar is a personal AI assistant I built and use daily. Apple Watch sleep data flows into Supabase every morning, and at 8:30 AM I get a WhatsApp recap of how I slept. To log workouts I send a voice note: Whisper transcribes, Claude parses the exercises, and they land in Notion under the right routine. Multi-agent system on FastAPI, deployed on Fly.io, 137 pytest tests. Stack: Python, FastAPI, Claude (Sonnet 4.6 + Haiku 4.5 + Opus 4.7), Whisper, Twilio, Supabase, Notion.
+
 > Un asistente AI que monitorea cómo dormís, cómo entrenás, y te manda reportes
 > diarios por WhatsApp. Construido sobre FastAPI, Claude (Anthropic) y un
 > sistema de varios agentes especializados.
