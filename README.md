@@ -12,18 +12,31 @@
 
 ---
 
+## Demo
+
+_Voice note in, structured workout logged to Notion._
+
+![Voice note workflow: Mateo sends a 51-second audio note, Oscar replies with 5 parsed exercises (sets, reps, weight, RPE) added to the right routine in Notion](./docs/screenshots/oscar-workouts.png)
+
+_Conversational queries on real sleep data._
+
+![Sleep query: Mateo asks "Cuánto dormí la última noche?" and Oscar answers with 8h10, time in bed from 22:59 to 07:27, using real Apple Health data](./docs/screenshots/oscar-sleep.png)
+
+---
+
 ## Tabla de contenidos
 
-1. [¿Qué es esto?](#qué-es-esto)
-2. [Cómo se usa (en la práctica)](#cómo-se-usa-en-la-práctica)
-3. [¿Por qué lo construí?](#por-qué-lo-construí)
-4. [Vista general — cómo funciona](#vista-general--cómo-funciona)
-5. [Stack técnico](#stack-técnico)
-6. [Sistema multi-agente](#sistema-multi-agente)
-7. [Seguridad](#seguridad)
-8. [Cómo correrlo localmente](#cómo-correrlo-localmente)
-9. [Lecciones aprendidas](#lecciones-aprendidas)
-10. [Roadmap](#roadmap)
+1. [Demo](#demo)
+2. [¿Qué es esto?](#qué-es-esto)
+3. [Cómo se usa (en la práctica)](#cómo-se-usa-en-la-práctica)
+4. [¿Por qué lo construí?](#por-qué-lo-construí)
+5. [Vista general — cómo funciona](#vista-general--cómo-funciona)
+6. [Stack técnico](#stack-técnico)
+7. [Sistema multi-agente](#sistema-multi-agente)
+8. [Seguridad](#seguridad)
+9. [Cómo correrlo localmente](#cómo-correrlo-localmente)
+10. [Lecciones aprendidas](#lecciones-aprendidas)
+11. [Roadmap](#roadmap)
 
 ---
 
